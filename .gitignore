@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.env
+candidates.db
+freddie-ai-88a7d866d57a.json
