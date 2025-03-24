@@ -11,5 +11,5 @@ A backend pipeline to automate recruitment using Google Sheets, Drive, Gmail, an
 ## Setup
 1. Clone the repo:
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/Kolade-Amire/freddie-ai.git
    cd freddie-ai
