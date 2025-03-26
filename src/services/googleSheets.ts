@@ -1,6 +1,6 @@
 import { google } from 'googleapis';
-import { config } from '../config/env';
 import { Candidate } from '../models/candidate';
+import {FreddieException} from "../FreddieException";
 
 export class GoogleSheetsService {
     private sheets;
@@ -8,7 +8,7 @@ export class GoogleSheetsService {
     constructor(credentialsPath: string) {
         const auth = new google.auth.GoogleAuth({
             keyFile: credentialsPath,
-            scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+            scopes: ["https://www.googleapis.com/auth/spreadsheets"],
         });
         this.sheets = google.sheets({ version: 'v4', auth });
     }
@@ -17,19 +17,42 @@ export class GoogleSheetsService {
         try {
             const response = await this.sheets.spreadsheets.values.get({
                 spreadsheetId: sheetId,
-                range: 'Sheet1!A2:D', // Name, Email, Answers, Resume Link
+                range: "Sheet1!A1:Z", // google sheet range
             });
 
-            const rows = response.data.values || [];
-            return rows.map(row => ({
-                name: row[0],
-                email: row[1],
-                screeningAnswers: row[2],
-                resumeLink: row[3],
-            }));
-        } catch (error) {
-            console.error('Error fetching candidates from Sheets:', error);
-            throw error;
+            const [headers, ...rows] = response.data.values || [];
+
+            if (!headers || headers.length < 3) {
+                console.error("Sheet doesn't have required columns");
+
+            }
+
+            //Identify screening question columns (everything after column C)
+            const screeningQuestions = headers.slice(3)
+
+
+
+            return rows.map(row => {
+                const candidate: Candidate = {
+                    fullName: row[0] || '',
+                    email: row[1] || '',
+                    resumeLink: row[2] || '',
+                    screeningAnswers: {}
+                };
+
+                // Add screening Q&A pairs
+                screeningQuestions.forEach((question, index) => {
+                    if (question) { // Only process if header exists
+                        const answer = row[3 + index]?.toString().trim() || '';
+                        candidate.screeningAnswers[question] = answer;
+                    }
+                });
+
+                return candidate;
+            });
+        }catch (error) {
+            console.error("Error fetching candidates from Sheets: ", error);
+            throw new FreddieException("An unexpected error occurred while trying to fetch candidates from Google Sheets");
         }
     }
 }

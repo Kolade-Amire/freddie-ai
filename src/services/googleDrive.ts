@@ -1,6 +1,6 @@
-import { google } from 'googleapis';
+import {google} from 'googleapis';
 import pdfParse from 'pdf-parse';
-import { config } from '../config/env';
+import {FreddieException} from "../FreddieException";
 
 export class GoogleDriveService {
     private drive;
@@ -15,6 +15,7 @@ export class GoogleDriveService {
 
     async downloadResume(resumeLink: string): Promise<string> {
         try {
+            //get the file ID from link
             const fileId = resumeLink.split('/d/')[1].split('/')[0];
             const response = await this.drive.files.get(
                 { fileId, alt: 'media' },
@@ -25,7 +26,7 @@ export class GoogleDriveService {
             return pdfData.text;
         } catch (error) {
             console.error('Error downloading resume from Drive:', error);
-            throw error;
+            throw new FreddieException("An unexpected error occurred while downloading resume from Google Drive");
         }
     }
 }

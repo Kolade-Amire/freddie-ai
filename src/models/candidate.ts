@@ -1,7 +1,7 @@
 export interface Candidate {
-    name: string;
+    fullName: string;
     email: string;
-    screeningAnswers: string;
+    screeningAnswers: Record<string, string>;
     resumeLink: string;
     resumeText?: string;
     score?: number;

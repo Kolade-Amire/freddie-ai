@@ -1,5 +1,6 @@
 import sqlite3 from 'sqlite3';
 import { Candidate } from '../models/candidate';
+import {FreddieException} from "../FreddieException";
 
 export class DatabaseService {
     private db: sqlite3.Database;
@@ -27,7 +28,7 @@ export class DatabaseService {
     saveCandidate(candidate: Candidate): void {
         this.db.run(
             'INSERT INTO candidates (name, email, score) VALUES (?, ?, ?)',
-            [candidate.name, candidate.email, candidate.score || 0],
+            [candidate.fullName, candidate.email, candidate.score],
             (err) => {
                 if (err) console.error('Error saving candidate:', err);
             }
@@ -35,8 +36,11 @@ export class DatabaseService {
     }
 
     getAllCandidates(callback: (rows: any[]) => void): void {
-        this.db.all('SELECT * FROM candidates', (err, rows) => {
-            if (err) console.error('Error fetching candidates:', err);
+        this.db.all('SELECT * FROM candidates ORDER BY score DESC', (err, rows) => {
+            if (err) {
+                console.error('Error fetching candidates:', err);
+                throw new FreddieException("An unexpected error occurred while trying to fetch candidates ranking.");
+            }
             callback(rows || []);
         });
     }

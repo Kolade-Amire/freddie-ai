@@ -8,7 +8,6 @@ import { GmailService } from './services/gmail';
 import { FreddieApp } from './app';
 import { createRankingsRouter } from './routes/rankings';
 
-// Manual DI: Instantiate services
 const sheetsService = new GoogleSheetsService(config.googleCredentialsPath);
 const driveService = new GoogleDriveService(config.googleCredentialsPath);
 const openAiService = new OpenAiService(config.openaiApiKey);

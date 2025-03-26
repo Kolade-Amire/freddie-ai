@@ -21,7 +21,7 @@ export class FreddieApp {
 
             for (const candidate of candidates) {
                 candidate.resumeText = await this.driveService.downloadResume(candidate.resumeLink);
-                candidate.score = await this.openAiService.evaluateCandidate(candidate);
+                candidate.score = await this.openAiService.evaluateCandidate(candidate, "marketing officer");
 
                 this.dbService.saveCandidate(candidate);
 
@@ -33,9 +33,5 @@ export class FreddieApp {
         } catch (error) {
             console.error('Error processing candidates:', error);
         }
-    }
-
-    getDatabaseService(): DatabaseService {
-        return this.dbService;
     }
 }
