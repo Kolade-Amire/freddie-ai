@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreddieAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="bg-gray-100 font-['Inter']">
+<header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto py-4 px-4">
+        <h1 class="text-2xl font-semibold text-gray-800">FreddieAI</h1>
+    </div>
+</header>
+
+<main class="max-w-3xl mx-auto mt-8 px-4">
+    <div id="processing-screen" class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Processing Candidates</h2>
+        <div id="messages" class="space-y-2 mb-4 max-h-96 overflow-y-auto"></div>
+        <div id="complete-message" class="hidden">
+            <p class="text-green-600 font-medium">All candidates processed successfully!</p>
+            <button id="show-rankings-btn"
+                    class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                Show Rankings
+            </button>
+        </div>
+    </div>
+
+    <div id="rankings-screen" class="hidden bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Candidate Rankings</h2>
+        <div id="rankings-list" class="space-y-4"></div>
+        <button id="back-btn"
+                class="mt-4 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">
+            Back to Processing
+        </button>
+    </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,6 +1,5 @@
 import sqlite3 from 'sqlite3';
-import { Candidate } from '../models/candidate';
-import {FreddieException} from "../FreddieException";
+import {Candidate} from '../models/candidate';
 
 export class DatabaseService {
     private db: sqlite3.Database;
@@ -13,6 +12,12 @@ export class DatabaseService {
     }
 
     private initializeDb(): void {
+
+        this.db.run(`DROP TABLE IF NOT EXISTS candidates`,
+            (err) => {
+                if (err) console.error('Error creating table:', err);
+            })
+
         this.db.run(`
       CREATE TABLE IF NOT EXISTS candidates (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,7 +27,7 @@ export class DatabaseService {
       )
     `, (err) => {
             if (err) console.error('Error creating table:', err);
-        });
+        })
     }
 
     saveCandidate(candidate: Candidate): void {
@@ -32,14 +37,13 @@ export class DatabaseService {
             (err) => {
                 if (err) console.error('Error saving candidate:', err);
             }
-        );
+        )
     }
 
     getAllCandidates(callback: (rows: any[]) => void): void {
         this.db.all('SELECT * FROM candidates ORDER BY score DESC', (err, rows) => {
             if (err) {
                 console.error('Error fetching candidates:', err);
-                throw new FreddieException("An unexpected error occurred while trying to fetch candidates ranking.");
             }
             callback(rows || []);
         });
