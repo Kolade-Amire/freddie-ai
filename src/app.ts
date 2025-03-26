@@ -18,6 +18,8 @@ export class FreddieApp {
     ) {}
 
     async processCandidates(): Promise<void> {
+        await this.dbService.waitForInitialization();
+
         try {
             const candidates: Candidate[] = await this.sheetsService.fetchCandidates(config.sheetId);
 
@@ -34,10 +36,11 @@ export class FreddieApp {
                     });
                 }else{
                     this.io.emit('low_score', {
-                        message: `${candidate.fullName} has a low score ${candidate.score}. Email not sent to them.)`
+                        message: `${candidate.fullName} has a low score. Email not sent to them.`
                     });
                 }
             }
+            this.io.emit('processing_complete');
             console.log('Candidate processing completed successfully.');
         } catch (error) {
             console.error('Error processing candidates:', error);

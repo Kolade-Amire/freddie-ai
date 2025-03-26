@@ -20,23 +20,36 @@ const io = new Server(server);
 const sheetsService = new GoogleSheetsService(config.googleCredentialsPath);
 const driveService = new GoogleDriveService(config.googleCredentialsPath);
 const openAiService = new OpenAiService(config.openaiApiKey);
-const dbService = new DatabaseService('./candidates.db');
+const dbService = new DatabaseService();
 const gmailService = new GmailService(config.gmailClientId, config.gmailClientSecret, config.gmailRefreshToken);
 
 // Create app instance with dependencies
 const freddieApp = new FreddieApp(sheetsService, driveService, openAiService, dbService, gmailService, io);
 
+
+app.get('/', (_req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
 // Serve static files
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api', createRankingsRouter(dbService));
 
-// Start processing candidates with Socket.IO
-freddieApp.processCandidates().then(() => {
-    io.emit('processing_complete');
+
+// API endpoint to trigger candidate processing
+app.post('/api/process-candidates', async (_req, res) => {
+    try {
+        await freddieApp.processCandidates();
+        res.status(200).json({ message: 'Candidate processing started' });
+    } catch (error) {
+        console.error('Error in /api/process-candidates:', error);
+        res.status(500).json({ error: 'Failed to process candidates' });
+    }
 });
 
 
-server.listen(config.port, () => {
+
+server.listen(config.port, '0.0.0.0', () => {
     console.log(`Server running on port ${config.port}`);
 });
 

@@ -16,7 +16,7 @@ export class GmailService {
                 `To: ${candidate.email}`,
                 `Subject: Interview Invitation for ${candidate.fullName}`,
                 '',
-                `Hi ${candidate.fullName}, \n\n thanks for applying to The Freddie Inc.! Based on our initial screening, we'd like to move forward with your application.`,
+                `Hi ${candidate.fullName}, \n\n Thanks for applying to The Freddie Inc.! \n Based on our initial screening, we'd like to move forward with your application.`,
             ].join('\n');
 
             const encodedEmail = Buffer.from(email)

@@ -23,7 +23,7 @@ export class OpenAiService {
                         - 100 means a perfect fit
                         Do not include decimals, explanations, comments, or additional text. Only return a score.
                         Returning any response other than a number is a violation and it disrupts business execution.
-                        If the provided information is insufficient to make a judgment, return -1.`;
+                        If the provided information is not valid, return -1.`;
 
 
             const response = await this.openai.chat.completions.create({

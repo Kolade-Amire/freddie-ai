@@ -4,6 +4,8 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
+RUN apk add --no-cache python3 make g++ sqlite
+
 # Copy package files
 COPY package*.json ./
 
@@ -13,6 +15,9 @@ RUN npm install
 # Copy source code
 COPY . .
 
+RUN mkdir -p public && chown -R node:node public
+COPY public ./public
+
 # Build TypeScript
 RUN npx tsc
 
@@ -21,10 +26,16 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy built files and node_modules
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
+# Install production dependencies
+RUN apk add --no-cache python3 make g++ sqlite
 COPY package*.json ./
+RUN npm install --production
+
+
+# Copy built files
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/public ./public
+
 
 # Expose port
 EXPOSE 3000
